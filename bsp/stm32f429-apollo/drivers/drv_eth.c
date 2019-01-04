@@ -15,6 +15,9 @@
 #include <rtdevice.h>
 #include <finsh.h>
 
+
+#define INT_ETH_PRIO                                                   ((0x01 << 4) | 0x02) // Ethernet
+
 /* debug option */
 //#define DEBUG
 //#define ETH_RX_DUMP
@@ -26,23 +29,25 @@
 #define STM32_ETH_PRINTF(...)
 #endif
 
-/*网络引脚设置 RMII接口 
-    ETH_MDIO -------------------------> PA2
-    ETH_MDC --------------------------> PC1
-    ETH_RMII_REF_CLK------------------> PA1
-    ETH_RMII_CRS_DV ------------------> PA7
-    ETH_RMII_RXD0 --------------------> PC4
-    ETH_RMII_RXD1 --------------------> PC5
-    ETH_RMII_TX_EN -------------------> PB11
-    ETH_RMII_TXD0 --------------------> PG13
-    ETH_RMII_TXD1 --------------------> PG14
-    ETH_RESET-------------------------> PCF8574扩展IO
-*/
-#define ETH_MDIO_PORN 					GPIOA
-#define ETH_MDIO_PIN 					GPIO_PIN_2
-#define ETH_MDC_PORN 					GPIOC
-#define ETH_MDC_PIN 					GPIO_PIN_1
-#define ETH_RMII_REF_CLK_PORN 			GPIOA
+
+
+/** RMII interface
+  *  ETH_MDIO ------------------> PA2
+  *  ETH_MDC -------------------> PC1
+  *  ETH_RMII_REF_CLK-----------> PA1
+  *  ETH_RMII_CRS_DV -----------> PA7
+  *  ETH_RMII_RXD0 -------------> PC4
+  *  ETH_RMII_RXD1 -------------> PC5
+  *  ETH_RMII_TX_EN ------------> PG11
+  *  ETH_RMII_TXD0 -------------> PG13
+  *  ETH_RMII_TXD1 -------------> PG14
+  *  ETH_RESET------------------> PH2
+  */
+#define ETH_MDIO_PORN             GPIOA
+#define ETH_MDIO_PIN              GPIO_PIN_2
+#define ETH_MDC_PORN              GPIOC
+#define ETH_MDC_PIN               GPIO_PIN_1
+#define ETH_RMII_REF_CLK_PORN     GPIOA
 #define ETH_RMII_REF_CLK_PIN 			GPIO_PIN_1
 #define ETH_RMII_CRS_DV_PORN 			GPIOA
 #define ETH_RMII_CRS_DV_PIN 			GPIO_PIN_7
@@ -50,16 +55,23 @@
 #define ETH_RMII_RXD0_PIN 				GPIO_PIN_4
 #define ETH_RMII_RXD1_PORN 				GPIOC
 #define ETH_RMII_RXD1_PIN 				GPIO_PIN_5
-#define ETH_RMII_TX_EN_PORN 			GPIOB
+#define ETH_RMII_TX_EN_PORN 			GPIOG
 #define ETH_RMII_TX_EN_PIN 				GPIO_PIN_11
 #define ETH_RMII_TXD0_PORN 				GPIOG
 #define ETH_RMII_TXD0_PIN 				GPIO_PIN_13
 #define ETH_RMII_TXD1_PORN 				GPIOG
 #define ETH_RMII_TXD1_PIN 				GPIO_PIN_14
+#define ETH_WKRST_PORN 				    GPIOH
+#define ETH_WKRST_PIN 				    GPIO_PIN_2
 
-#define LAN8742A_PHY_ADDRESS 0x00
+#define ETH_WKRST_ON              HAL_GPIO_WritePin(GPIOH,GPIO_PIN_2,GPIO_PIN_SET);
+#define ETH_WKRST_OFF 				    HAL_GPIO_WritePin(GPIOH,GPIO_PIN_2,GPIO_PIN_RESET);
 
-#define MAX_ADDR_LEN 6
+#define LAN8742A_PHY_ADDRESS      0x00
+
+#define MAX_ADDR_LEN              6
+
+
 struct rt_stm32_eth
 {
 	/* inherit from ethernet device */
@@ -80,6 +92,24 @@ static  ETH_HandleTypeDef EthHandle;
 static struct rt_stm32_eth stm32_eth_device;
 static struct rt_semaphore tx_wait;
 
+
+/**
+  * @brief  delay function.
+  * @param  [nms] n(ms) delay.
+  * @retval None
+  */
+static void delay_ms(rt_uint32_t nms)
+{
+//    rt_thread_delay((RT_TICK_PER_SECOND * nms + 999) / 1000);
+    while (nms--)
+    {
+        int i;
+        for (i = 0; i < 10000; i++)
+        {
+            __NOP();
+        }
+    }
+}
 /* interrupt service routine */
 void ETH_IRQHandler(void)
 {
@@ -114,13 +144,27 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
     rt_kprintf("eth err\n");
 }
 
+//static void phy_pin_reset(void)
+//{
+//	rt_pcf8574_write_bit(ETH_RESET_IO, 1);
+//	rt_thread_delay(RT_TICK_PER_SECOND / 10);
+//    
+//	rt_pcf8574_write_bit(ETH_RESET_IO, 0);
+//	rt_thread_delay(RT_TICK_PER_SECOND / 10);
+//}
 static void phy_pin_reset(void)
 {
-	rt_pcf8574_write_bit(ETH_RESET_IO, 1);
-	rt_thread_delay(RT_TICK_PER_SECOND / 10);
+    rt_base_t level;
     
-	rt_pcf8574_write_bit(ETH_RESET_IO, 0);
-	rt_thread_delay(RT_TICK_PER_SECOND / 10);
+    level = rt_hw_interrupt_disable();
+    
+    ETH_WKRST_OFF;
+    delay_ms(100);
+	
+    ETH_WKRST_ON;
+    delay_ms(100);
+    
+    rt_hw_interrupt_enable(level);
 }
 #ifdef DEBUG
 FINSH_FUNCTION_EXPORT(phy_pin_reset, phy hardware reset);
@@ -133,7 +177,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 	
 	__HAL_RCC_ETH_CLK_ENABLE();
 	
-    rt_pcf8574_init();
+    //rt_pcf8574_init();
 	phy_pin_reset();
 
     /* ETHERNET Configuration --------------------------------------------------*/
@@ -146,7 +190,7 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 	EthHandle.Init.RxMode = ETH_RXINTERRUPT_MODE;
 	EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_SOFTWARE;
     //EthHandle.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
-	EthHandle.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
+	EthHandle.Init.PhyAddress = DP83848_PHY_ADDRESS;
 	
 	HAL_ETH_DeInit(&EthHandle);
 	
@@ -479,58 +523,68 @@ static void NVIC_Configuration(void)
 	HAL_NVIC_EnableIRQ(ETH_IRQn);
 }
 
-/*
- * GPIO Configuration for ETH
- */
+
+/**
+  * @brief  GPIO Configuration for ethernet.
+  * @param  None.
+  * @retval None
+  */
 static void GPIO_Configuration(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    STM32_ETH_PRINTF("GPIO_Configuration...\n");
+   // ETH_PRINTF("GPIO_Configuration...\n");
     
     /* Enable SYSCFG clock */
     __HAL_RCC_ETH_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	__HAL_RCC_GPIOG_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOG_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
 
     GPIO_InitStructure.Speed = GPIO_SPEED_HIGH;
     GPIO_InitStructure.Mode  = GPIO_MODE_AF_PP;
     GPIO_InitStructure.Alternate = GPIO_AF11_ETH;
     GPIO_InitStructure.Pull  = GPIO_NOPULL;
 
-	GPIO_InitStructure.Pin = ETH_MDIO_PIN;
-	HAL_GPIO_Init(ETH_MDIO_PORN,&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = ETH_MDC_PIN;
-	HAL_GPIO_Init(ETH_MDC_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_MDIO_PIN;
+    HAL_GPIO_Init(ETH_MDIO_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_MDC_PIN;
+    HAL_GPIO_Init(ETH_MDC_PORN,&GPIO_InitStructure);
 
-	GPIO_InitStructure.Pin = ETH_RMII_REF_CLK_PIN;
-	HAL_GPIO_Init(ETH_RMII_REF_CLK_PORN,&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = ETH_RMII_CRS_DV_PIN;
-	HAL_GPIO_Init(ETH_RMII_CRS_DV_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_REF_CLK_PIN;
+    HAL_GPIO_Init(ETH_RMII_REF_CLK_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_CRS_DV_PIN;
+    HAL_GPIO_Init(ETH_RMII_CRS_DV_PORN,&GPIO_InitStructure);
 
-	GPIO_InitStructure.Pin = ETH_RMII_REF_CLK_PIN;
-	HAL_GPIO_Init(ETH_RMII_REF_CLK_PORN,&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = ETH_RMII_CRS_DV_PIN;
-	HAL_GPIO_Init(ETH_RMII_CRS_DV_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_REF_CLK_PIN;
+    HAL_GPIO_Init(ETH_RMII_REF_CLK_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_CRS_DV_PIN;
+    HAL_GPIO_Init(ETH_RMII_CRS_DV_PORN,&GPIO_InitStructure);
 	
-	GPIO_InitStructure.Pin = ETH_RMII_RXD0_PIN;
-	HAL_GPIO_Init(ETH_RMII_RXD0_PORN,&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = ETH_RMII_RXD1_PIN;
-	HAL_GPIO_Init(ETH_RMII_RXD1_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_RXD0_PIN;
+    HAL_GPIO_Init(ETH_RMII_RXD0_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_RXD1_PIN;
+    HAL_GPIO_Init(ETH_RMII_RXD1_PORN,&GPIO_InitStructure);
 	
-	GPIO_InitStructure.Pin = ETH_RMII_TX_EN_PIN;
-	HAL_GPIO_Init(ETH_RMII_TX_EN_PORN,&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = ETH_RMII_TXD0_PIN;
-	HAL_GPIO_Init(ETH_RMII_TXD0_PORN,&GPIO_InitStructure);
-	GPIO_InitStructure.Pin = ETH_RMII_TXD1_PIN;
-	HAL_GPIO_Init(ETH_RMII_TXD1_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_TX_EN_PIN;
+    HAL_GPIO_Init(ETH_RMII_TX_EN_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_TXD0_PIN;
+    HAL_GPIO_Init(ETH_RMII_TXD0_PORN,&GPIO_InitStructure);
+    GPIO_InitStructure.Pin = ETH_RMII_TXD1_PIN;
+    HAL_GPIO_Init(ETH_RMII_TXD1_PORN,&GPIO_InitStructure);
+    
+    GPIO_InitStructure.Mode  = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStructure.Pull = GPIO_PULLUP;
+    GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
+    GPIO_InitStructure.Pin = ETH_WKRST_PIN;
+    HAL_GPIO_Init(ETH_WKRST_PORN,&GPIO_InitStructure);
+    phy_pin_reset();
 	
-    HAL_NVIC_SetPriority(ETH_IRQn,1,0);
+    HAL_NVIC_SetPriority(ETH_IRQn, (INT_ETH_PRIO>>4)&0x0F, INT_ETH_PRIO&0x0F);
     HAL_NVIC_EnableIRQ(ETH_IRQn);
 }
-
 
 void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
