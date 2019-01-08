@@ -22,6 +22,8 @@ documentation/html
 *.a
 *.i
 *.d
+*.uvguix.*
+*.uvgui.*
 tools/kconfig-frontends/kconfig-mconf
 packages
 cconfig.h
@@ -35,3 +37,5 @@ ncscope.*
 tags
 
 Objects
+*.TMP
+.vscode

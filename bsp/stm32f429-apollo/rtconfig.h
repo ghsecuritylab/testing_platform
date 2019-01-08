@@ -39,7 +39,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_CONSOLE_DEVICE_NAME "uart4"
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
@@ -156,56 +156,6 @@
 #define LWIP_SO_RCVBUF 1
 #define LWIP_NETIF_LOOPBACK 0
 
-/* Modbus master and slave stack */
-
-
-/* VBUS(Virtual Software BUS) */
-
-
-/* Utilities */
-
-
-/* ARM CMSIS */
-
-
-/* RT-Thread online packages */
-
-/* IoT - internet of things */
-
-
-/* Wi-Fi */
-
-/* Marvell WiFi */
-
-
-/* Wiced WiFi */
-
-
-/* security packages */
-
-
-/* language packages */
-
-
-/* multimedia packages */
-
-
-/* tools packages */
-
-
-/* system packages */
-
-
-/* peripheral libraries and drivers */
-
-
-/* miscellaneous packages */
-
-
-/* sample package */
-
-
-/* example package: hello */
 
 #define RT_USING_EXT_SDRAM
 #define RT_USING_UART1
@@ -213,5 +163,9 @@
 #define RT_USING_UART3
 #define RT_USING_SPI5
 #define RT_RTC_NAME "rtc"
+
+
+/* Thread config */
+
 
 #endif
