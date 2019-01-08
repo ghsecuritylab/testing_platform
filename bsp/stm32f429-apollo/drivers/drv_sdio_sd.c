@@ -50,7 +50,7 @@ void HAL_SD_MspInit(SD_HandleTypeDef *hsd)
     GPIO_Initure.Pull=GPIO_PULLUP;          //上拉
     GPIO_Initure.Speed=GPIO_SPEED_HIGH;     //高速
     GPIO_Initure.Alternate=GPIO_AF12_SDIO;  //复用为SDIO
-    HAL_GPIO_Init(GPIOC,&GPIO_Initure);     //初始化
+//    HAL_GPIO_Init(GPIOC,&GPIO_Initure);     //初始化
     
     //PD2
     GPIO_Initure.Pin=GPIO_PIN_2;            

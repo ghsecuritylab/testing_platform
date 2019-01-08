@@ -64,10 +64,10 @@
 /* Definition for USART4 Pins */
 #define USART4_TX_PIN                    GPIO_PIN_10
 #define USART4_TX_GPIO_PORT              GPIOC
-#define USART4_TX_AF                     GPIO_AF7_USART4
+#define USART4_TX_AF                     GPIO_AF8_UART4
 #define USART4_RX_PIN                    GPIO_PIN_11
 #define USART4_RX_GPIO_PORT              GPIOC
-#define USART4_RX_AF                     GPIO_AF7_USART4
+#define USART4_RX_AF                     GPIO_AF8_UART4
 #endif
 
 #ifdef RT_USING_UART5
@@ -77,10 +77,10 @@
 /* Definition for USART5 Pins */
 #define USART5_TX_PIN                    GPIO_PIN_12
 #define USART5_TX_GPIO_PORT              GPIOC
-#define USART5_TX_AF                     GPIO_AF7_USART5
+#define USART5_TX_AF                     GPIO_AF8_UART5
 #define USART5_RX_PIN                    GPIO_PIN_2
 #define USART5_RX_GPIO_PORT              GPIOD
-#define USART5_RX_AF                     GPIO_AF7_USART5
+#define USART5_RX_AF                     GPIO_AF8_UART5
 #endif
 
 /* STM32 uart driver */
@@ -334,7 +334,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 #endif
 
 #if defined(RT_USING_UART4)
-    if (huart->Instance == USART4)
+    if (huart->Instance == UART4)
     {
         /*##-1- Enable peripherals and GPIO Clocks #################################*/
         /* Enable GPIO TX/RX clock */
@@ -342,7 +342,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         USART4_RX_GPIO_CLK_ENABLE();
 
         /* Enable USARTx clock */
-        __HAL_RCC_USART4_CLK_ENABLE();
+        __HAL_RCC_UART4_CLK_ENABLE();
 
         /*##-2- Configure peripheral GPIO ##########################################*/
         /* UART TX GPIO pin configuration  */
@@ -360,13 +360,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
         HAL_GPIO_Init(USART4_RX_GPIO_PORT, &GPIO_InitStruct);
 
-        HAL_NVIC_SetPriority(USART4_IRQn, 0, 1);
-        HAL_NVIC_EnableIRQ(USART4_IRQn);
+        HAL_NVIC_SetPriority(UART4_IRQn, 0, 1);
+        HAL_NVIC_EnableIRQ(UART4_IRQn);
     }
 #endif
 
 #if defined(RT_USING_UART5)
-    if (huart->Instance == USART5)
+    if (huart->Instance == UART5)
     {
         /*##-1- Enable peripherals and GPIO Clocks #################################*/
         /* Enable GPIO TX/RX clock */
@@ -374,7 +374,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         USART5_RX_GPIO_CLK_ENABLE();
 
         /* Enable USARTx clock */
-        __HAL_RCC_USART5_CLK_ENABLE();
+        __HAL_RCC_UART5_CLK_ENABLE();
 
         /*##-2- Configure peripheral GPIO ##########################################*/
         /* UART TX GPIO pin configuration  */
@@ -392,8 +392,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
         HAL_GPIO_Init(USART5_RX_GPIO_PORT, &GPIO_InitStruct);
 
-        HAL_NVIC_SetPriority(USART5_IRQn, 0, 1);
-        HAL_NVIC_EnableIRQ(USART5_IRQn);
+        HAL_NVIC_SetPriority(UART5_IRQn, 0, 1);
+        HAL_NVIC_EnableIRQ(UART5_IRQn);
     }
 #endif
 }
@@ -460,11 +460,11 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
 #endif
 
 #if defined(RT_USING_UART4)
-    if (huart->Instance == USART4)
+    if (huart->Instance == UART4)
     {
         /*##-1- Reset peripherals ##################################################*/
-        __HAL_RCC_USART4_FORCE_RESET();
-        __HAL_RCC_USART4_RELEASE_RESET();
+        __HAL_RCC_UART4_FORCE_RESET();
+        __HAL_RCC_UART4_RELEASE_RESET();
 
         /*##-2- Disable peripherals and GPIO Clocks #################################*/
         /* Configure UART Tx as alternate function  */
@@ -472,16 +472,16 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
         /* Configure UART Rx as alternate function  */
         HAL_GPIO_DeInit(USART4_RX_GPIO_PORT, USART4_RX_PIN);
 
-        HAL_NVIC_DisableIRQ(USART4_IRQn);
+        HAL_NVIC_DisableIRQ(UART4_IRQn);
     }
 #endif
 
 #if defined(RT_USING_UART5)
-    if (huart->Instance == USART5)
+    if (huart->Instance == UART5)
     {
         /*##-1- Reset peripherals ##################################################*/
-        __HAL_RCC_USART5_FORCE_RESET();
-        __HAL_RCC_USART5_RELEASE_RESET();
+        __HAL_RCC_UART5_FORCE_RESET();
+        __HAL_RCC_UART5_RELEASE_RESET();
 
         /*##-2- Disable peripherals and GPIO Clocks #################################*/
         /* Configure UART Tx as alternate function  */
@@ -489,7 +489,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
         /* Configure UART Rx as alternate function  */
         HAL_GPIO_DeInit(USART5_RX_GPIO_PORT, USART5_RX_PIN);
 
-        HAL_NVIC_DisableIRQ(USART5_IRQn);
+        HAL_NVIC_DisableIRQ(UART5_IRQn);
     }
 #endif
 }
@@ -661,7 +661,7 @@ int stm32_hw_usart_init(void)
 
 #ifdef RT_USING_UART4
     uart = &uart4;
-    uart->UartHandle.Instance = USART4;
+    uart->UartHandle.Instance = UART4;
 
     serial4.ops    = &stm32_uart_ops;
     serial4.config = config;
@@ -675,7 +675,7 @@ int stm32_hw_usart_init(void)
 
 #ifdef RT_USING_UART5
     uart = &uart5;
-    uart->UartHandle.Instance = USART5;
+    uart->UartHandle.Instance = UART5;
 
     serial5.ops    = &stm32_uart_ops;
     serial5.config = config;
@@ -689,3 +689,24 @@ int stm32_hw_usart_init(void)
     return 0;
 }
 INIT_BOARD_EXPORT(stm32_hw_usart_init);
+
+//ÖØÓ³Éä´®¿Ú4µ½rt_kprintf
+void rt_hw_console_output(const char *str)
+{
+    /* empty console output */
+
+	rt_enter_critical();
+
+	while(*str!='\0')
+	{
+		if(*str=='\n')
+		{
+			UART4->DR = (uint8_t)'\r'; 
+			while((UART4->SR&0X40)==0);
+		}
+		UART4->DR =*str++;
+		while((UART4->SR&0X40)==0);	
+	}
+
+	rt_exit_critical();
+}
