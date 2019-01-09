@@ -11,7 +11,9 @@
 /***********************************include***************************************/
 #include <rtthread.h>
 #include <rtconfig.h>
+#include "stdbool.h"
 #include "Sample.h"
+#include "DriverAD7616.h"
 
 /* 采样任务相关 */
 static struct rt_thread rt_thread_sample;
@@ -54,11 +56,30 @@ void SampleThread(void)
   */
 static void rt_sample_thread_entry(void* param)
 {
+	bool isStart = false;
+	
+	AD7616Init();
+	rt_thread_delay(5000);
 	
 	while(1)
 	{
+		if(false == isStart)
+		{
+			StartADCPWM();
+			isStart = true;
+		}
 		
-		rt_thread_delay(1000);
+		if(100 < g_SampleIndex)
+		{
+			StopADCPWM();
+			isStart = false;
+			for(uint32_t j = 0; j < (ADC_CHANNEL_NUM-2); j++)
+			{
+				rt_kprintf("g_SampleAdcData[%d][0] = %d.\r\n", j, g_SampleAdcData[j][0]);
+			}
+			rt_thread_delay(2000);
+		}
+		rt_thread_delay(20);
 	}
 }
 

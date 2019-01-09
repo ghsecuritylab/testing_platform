@@ -17,7 +17,7 @@ int rt_multi_thread_start(void)
 {
 	
     LedThread();
-//	SampleThread();
+	SampleThread();
 	
     return 0;
 }

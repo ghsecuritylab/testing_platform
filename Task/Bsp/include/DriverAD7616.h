@@ -31,16 +31,14 @@
 #define ADC_SAMPLE_LEN 128 //采样长度
 #define ADC_CHANNEL_NUM 32
 
-#define g_SampleNum 1500
 
 void AD7616Init(void);
 void StartADCPWM(void);
 void StopADCPWM(void);
 int32_t readChanelData(uint16_t chanelNum, uint16_t adcIndex);
 
-extern int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN ] ;
+extern int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN];
 extern uint16_t g_SampleIndex;
-extern int16_t g_Sample[4][g_SampleNum];
 
 
 /* PUBLIC FUNCTIONS ----------------------------------------------------------*/
