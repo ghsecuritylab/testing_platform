@@ -19,23 +19,23 @@
 #define IDLE_THREAD_STACK_SIZE							1024
 #define RT_DEBUG
 
-/* Inter-Thread communication */
 
+/* Inter-Thread communication */
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
 
-/* Memory Management */
 
+/* Memory Management */
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
 #define RT_USING_SMALL_MEM
 #define RT_USING_HEAP
 
-/* Kernel Device Object */
 
+/* Kernel Device Object */
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE								128
@@ -66,8 +66,8 @@
 /* C++ features */
 
 
-/* Command shell */
 
+/* Command shell */
 #define RT_USING_FINSH
 #define FINSH_THREAD_NAME								"tshell"
 #define FINSH_USING_HISTORY
@@ -78,8 +78,8 @@
 #define FINSH_THREAD_STACK_SIZE							2048
 #define FINSH_CMD_SIZE									80
 
-/* Device virtual file system */
 
+/* Device virtual file system */
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
 #define DFS_FILESYSTEMS_MAX								4
@@ -87,8 +87,8 @@
 #define DFS_FD_MAX										8
 #define RT_USING_DFS_ELMFAT
 
-/* elm-chan's FatFs, Generic FAT Filesystem Module */
 
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_DFS_ELM_CODE_PAGE							437
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_0
@@ -142,8 +142,8 @@
 #define IP_SOF_BROADCAST								1
 #define IP_SOF_BROADCAST_RECV							1
 
-/* Static IPv4 Address */
 
+/* Static IPv4 Address */
 #define RT_LWIP_IPADDR									"192.168.10.30"
 #define RT_LWIP_GWADDR									"192.168.10.1"
 #define RT_LWIP_MSKADDR									"255.255.255.0"
@@ -175,7 +175,8 @@
 #define RT_USING_SPI5
 #define RT_RTC_NAME										"rtc"
 
-
+/* Using Hardware Timer framework */  
+#define RT_USING_HWTIMER								1
 
 
 #endif

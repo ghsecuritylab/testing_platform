@@ -1497,6 +1497,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Task\Bsp\DriverIO.c</FilePath>
             </File>
+            <File>
+              <FileName>DriverAD7616.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Task\Bsp\DriverAD7616.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
