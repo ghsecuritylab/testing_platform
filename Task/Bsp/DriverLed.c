@@ -33,9 +33,6 @@ void InitLed(void)
 	RunLedHandle.GPIOx = GPIOB;
 	RunLedHandle.Write = GPIO_WriteStatus;
 	RunLedHandle.Read = NULL;
-	
-    Init_GPIO();
-	
 }
 
 /**

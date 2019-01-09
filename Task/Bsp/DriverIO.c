@@ -9,6 +9,7 @@
   */
 
 /*****************************include**********************************/
+#include <board.h>
 #include "DriverIO.h"
 
 
@@ -35,10 +36,11 @@ void Init_GPIO(void)
     GPIO_Initure.Pull = GPIO_PULLUP;          //上拉
     GPIO_Initure.Speed = GPIO_SPEED_HIGH;     //高速
     HAL_GPIO_Init(GPIOB, &GPIO_Initure);
-  
+
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);	//PB0初始化为1
     
 }
+INIT_BOARD_EXPORT(Init_GPIO);
 
 /**
   * @brief : IO口输出

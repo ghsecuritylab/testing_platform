@@ -46,7 +46,6 @@
 
 /* Using USART framework */
 #define RT_USING_SERIAL
-#define RT_USING_UART
 #define RT_USING_UART1
 #define RT_USING_UART2
 #define RT_USING_UART3
@@ -105,7 +104,6 @@
 /* Device Drivers */
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ									512
-#define RT_USING_SERIAL
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_MTD_NAND
