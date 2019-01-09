@@ -95,4 +95,4 @@ int mpu_init(void)
 	
 	return 0;
 }
-//INIT_BOARD_EXPORT(mpu_init);
+INIT_BOARD_EXPORT(mpu_init);

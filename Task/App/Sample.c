@@ -58,6 +58,7 @@ static void rt_sample_thread_entry(void* param)
 	while(1)
 	{
 		
+		rt_thread_delay(1000);
 	}
 }
 
