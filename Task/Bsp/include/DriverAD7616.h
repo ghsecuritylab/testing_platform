@@ -12,7 +12,7 @@
 #define _DRIVER_AD7616_H_
 
 /*****************************include**********************************/
-
+#include <stdint.h>
 
 
 #define AD7616_DEBUG

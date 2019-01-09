@@ -610,4 +610,4 @@ int nand_MT29F4G08_hw_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(nand_MT29F4G08_hw_init);
+//INIT_BOARD_EXPORT(nand_MT29F4G08_hw_init);

@@ -1482,6 +1482,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Task\App\Led.c</FilePath>
             </File>
+            <File>
+              <FileName>Sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Task\App\Sample.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

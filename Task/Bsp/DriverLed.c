@@ -12,17 +12,16 @@
 #include <rtthread.h>
 #include "stm32f4xx_hal.h"
 #include "DriverLed.h"
-#include "DriverIO.h"
 
 
 /***********************static*****************************/
-static struct IO_handle RunLedHandle;
+struct IO_handle RunLedHandle;		//运行指示灯的句柄
 
 
 /**************************function***********************************/
 
 /**
-  * @brief : led GPIO initialize
+  * @brief : led initialize
   * @param : void
   * @return: void 
   * @updata: [2019-01-08][Lei][create]
@@ -36,25 +35,17 @@ void InitLed(void)
 }
 
 /**
-  * @brief : led on
-  * @param : void
+  * @brief : led on and off
+  * @param : ledHandle led灯句柄
+  * @param : ledState 灯的状态：LED_ON LED_OFF
   * @return: void 
   * @updata: [2019-01-08][Lei][create]
   */
-void LedOn(void)
+void LedOnAndOff(struct IO_handle ledHandle, uint32_t ledState)
 {
-	RunLedHandle.Write(RunLedHandle, LED_ON);
+	ledHandle.Write(ledHandle, ledState);
 }
 
-/**
-  * @brief : led off
-  * @param : void
-  * @return: void 
-  * @updata: [2019-01-08][Lei][create]
-  */
-void LedOff(void)
-{
-	RunLedHandle.Write(RunLedHandle, LED_OFF);
-}
+
 
 

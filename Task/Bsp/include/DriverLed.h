@@ -11,6 +11,9 @@
 #ifndef _DRIVER_LED_H_
 #define _DRIVER_LED_H_
 
+#include <stdint.h>
+#include "DriverIO.h"
+
 /**************************DEFINES***********************************/
 #ifdef  LED_DEBUG
 #define LED_PRINTF(...)         rt_kprintf(__VA_ARGS__)
@@ -22,9 +25,10 @@
 #define LED_OFF		1
 
 
+extern struct IO_handle RunLedHandle;
+
 void InitLed(void);
-void LedOn(void);
-void LedOff(void);
+void LedOnAndOff(struct IO_handle ledHandle, uint32_t ledState);
 
 #endif
 

@@ -15,12 +15,6 @@
 #include "rtconfig.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
-//#include "drv_gpio.h"
-//#include "drv_timer.h"
-//#include "other_protect.h"
-//#include "common_data.h"
-//#include ".\MultiThread\multi_thread.h"
-//#include "wave_recording.h"
 #include "DriverAD7616.h"
 
 
@@ -48,7 +42,7 @@ __STATIC_INLINE void ADC_BusyInit(void);
 /* PUBLIC FUNCTION PROTOTYPES ------------------------------------------------*/
 /**
   * @description: AD7616 Init.
-  * @param[in]  : none
+  * @param		: none
   * @return     : none
   * @updata     : [YYYY-MM-DD] [Change person name][change content]
   */
@@ -174,7 +168,6 @@ __STATIC_INLINE void read_ad7616_data(uint16_t adc_index)
         g_SampleAdcData[adc_chanel][adc_index] = (ADC_FIFO_ADDRESS);
     }
 
-
 }
 
 
@@ -228,6 +221,7 @@ static void TIM5_PWM_Init(uint16_t arr, uint16_t pulse, uint16_t psc)
 void StartADCPWM(void)
 {
     HAL_TIM_PWM_Start(&TIM5_Handler, TIM_CHANNEL_1);
+	g_SampleIndex = 0;
 }
 /**
 * @brief:停止触发
@@ -238,10 +232,10 @@ void StopADCPWM(void)
 }
 
 /**
-  * @brief: ???????,????,????,?????HAL_TIM_PWM_Init()??.
-  * @param:  htim-?????.
-  * @return: ?
-  * @updata: [2017-08-07] [?????][????]
+  * @brief	: HAL_TIM_PWM_Init()回调函数
+  * @param	: htim-定时器句柄.
+  * @return	: void
+  * @updata	: [2017-08-07][][]
   */
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
 {
@@ -262,8 +256,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim)
   */
 void EXTI15_10_IRQHandler(void)
 {
-	static uint32_t num = 0;
-	static uint32_t numEnd = 0;
+	
 	if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_12) != RESET)
 	{
 		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_12);
@@ -271,7 +264,11 @@ void EXTI15_10_IRQHandler(void)
 		
 		//将所有通道的采样值保存在g_SampleAdcData中
 		read_ad7616_data(g_SampleIndex);
-		
+		g_SampleIndex++;
+		if(ADC_SAMPLE_LEN == g_SampleIndex)
+		{
+			g_SampleIndex = 0;
+		}
 	}
 
 }

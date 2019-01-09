@@ -11,11 +11,13 @@
 /***********************************include***************************************/
 #include <board.h>
 #include "Led.h"
+#include "Sample.h"
 
 int rt_multi_thread_start(void)
 {
 	
     LedThread();
+	SampleThread();
 	
     return 0;
 }

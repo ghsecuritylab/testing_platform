@@ -1,6 +1,6 @@
 /**
   *             Copyright (C) SOJO Electric CO., Ltd. 2019-2020. All right reserved.
-  * @file:      LedThread.c
+  * @file:      Led.c
   * @brief:     Led应用相关.
   * @version:   V1.0.0 
   * @author:    Lei
@@ -61,12 +61,12 @@ static void rt_led_thread_entry(void* param)
 	{
 		if(LED_OFF == runLedState)
 		{
-			LedOn();
+			LedOnAndOff(RunLedHandle, LED_ON);
 			runLedState = LED_ON;
 		}
 		else
 		{
-			LedOff();
+			LedOnAndOff(RunLedHandle, LED_OFF);
 			runLedState = LED_OFF;
 		}
 		rt_thread_delay(1000);
