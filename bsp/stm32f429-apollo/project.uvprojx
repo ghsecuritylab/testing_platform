@@ -1483,6 +1483,11 @@
               <FilePath>..\..\Task\App\Led.c</FilePath>
             </File>
             <File>
+              <FileName>KI_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Task\App\KI_test.c</FilePath>
+            </File>
+            <File>
               <FileName>Sample.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Task\App\Sample.c</FilePath>
@@ -1501,6 +1506,11 @@
               <FileName>DriverIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Task\Bsp\DriverIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>DriverKI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Task\Bsp\DriverKI.c</FilePath>
             </File>
             <File>
               <FileName>DriverAD7616.c</FileName>
