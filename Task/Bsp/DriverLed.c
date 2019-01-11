@@ -16,7 +16,7 @@
 
 
 /***********************static*****************************/
-static struct IO_handle RunLedHandle;
+ struct IO_handle RunLedHandle;
 
 
 /**************************function***********************************/

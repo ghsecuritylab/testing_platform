@@ -11,12 +11,14 @@
 /***********************************include***************************************/
 #include <board.h>
 #include "Led.h"
+#include "KI_test.h"
 
 int rt_multi_thread_start(void)
 {
 	
     LedThread();
-	
+	  KItestThread();
     return 0;
 }
 INIT_APP_EXPORT(rt_multi_thread_start);
+
