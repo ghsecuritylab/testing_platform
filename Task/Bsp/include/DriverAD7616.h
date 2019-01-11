@@ -13,6 +13,7 @@
 
 /*****************************include**********************************/
 #include <stdint.h>
+#include <stdbool.h>
 
 
 #define AD7616_DEBUG
@@ -31,19 +32,27 @@
 #define ADC_SAMPLE_LEN 128 //采样长度
 #define ADC_CHANNEL_NUM 32
 
+enum AD7616_State
+{
+	SAMPLE_READY = 0,			//准备开始采样
+	SAMPLE_GOING = 1,			//正在进行采样
+	SAMPLE_COMPLETE = 2,		//采样完成，数据还未进行处理
+};
 
-void AD7616Init(void);
-void StartADCPWM(void);
-void StopADCPWM(void);
-int32_t readChanelData(uint16_t chanelNum, uint16_t adcIndex);
 
 extern int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN];
 extern uint16_t g_SampleIndex;
+extern enum AD7616_State g_SampeState;
 
 
 /* PUBLIC FUNCTIONS ----------------------------------------------------------*/
 extern int rt_hw_adc_init(void);
 
+
+void AD7616Init(void);
+void StartADCPWM(void);
+void StopADCPWM(void);
+int32_t readChanelData(uint16_t chanelNum, uint16_t adcIndex);
 
 
 #endif

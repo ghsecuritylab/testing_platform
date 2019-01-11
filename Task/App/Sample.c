@@ -56,30 +56,25 @@ void SampleThread(void)
   */
 static void rt_sample_thread_entry(void* param)
 {
-	bool isStart = false;
-	
 	AD7616Init();
 	rt_thread_delay(5000);
 	
 	while(1)
 	{
-		if(false == isStart)
+		if(SAMPLE_READY == g_SampeState)
 		{
 			StartADCPWM();
-			isStart = true;
 		}
 		
-		if(100 < g_SampleIndex)
+		if(SAMPLE_COMPLETE == g_SampeState)
 		{
-			StopADCPWM();
-			isStart = false;
 			for(uint32_t j = 0; j < (ADC_CHANNEL_NUM-2); j++)
 			{
 				rt_kprintf("g_SampleAdcData[%d][0] = %d.\r\n", j, g_SampleAdcData[j][0]);
 			}
-			rt_thread_delay(2000);
+			g_SampeState = SAMPLE_READY;
 		}
-		rt_thread_delay(20);
+		rt_thread_delay(3000);
 	}
 }
 

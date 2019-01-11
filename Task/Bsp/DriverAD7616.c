@@ -22,8 +22,9 @@
 /**
 * 采样数据保存
 */
-int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN];
-uint16_t g_SampleIndex;
+int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN];		//保存采样值的数组
+uint16_t g_SampleIndex;				//采样索引
+enum AD7616_State g_SampeState = SAMPLE_READY;			//采样标志位
 
 
 /* PRIVATE VARIABLES ---------------------------------------------------------*/
@@ -221,6 +222,7 @@ static void TIM5_PWM_Init(uint16_t arr, uint16_t pulse, uint16_t psc)
 void StartADCPWM(void)
 {
     HAL_TIM_PWM_Start(&TIM5_Handler, TIM_CHANNEL_1);
+	g_SampeState = SAMPLE_GOING;		//设置采样标志位为正在采样
 	g_SampleIndex = 0;
 }
 /**
@@ -229,6 +231,7 @@ void StartADCPWM(void)
 void StopADCPWM(void)
 {
     HAL_TIM_PWM_Stop(&TIM5_Handler, TIM_CHANNEL_1);
+	g_SampeState = SAMPLE_COMPLETE;		//设置采样标志位为采样完成，等待数据数据
 }
 
 /**
@@ -267,7 +270,7 @@ void EXTI15_10_IRQHandler(void)
 		g_SampleIndex++;
 		if(ADC_SAMPLE_LEN == g_SampleIndex)
 		{
-			g_SampleIndex = 0;
+			StopADCPWM();
 		}
 	}
 
