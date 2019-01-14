@@ -2725,6 +2725,30 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>199</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\Task\App\CRC16.c</PathWithFileName>
+      <FilenameWithoutPath>CRC16.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>200</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\Task\App\RtuFrame.c</PathWithFileName>
+      <FilenameWithoutPath>RtuFrame.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
   <Group>
@@ -2735,7 +2759,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>13</GroupNumber>
-      <FileNumber>199</FileNumber>
+      <FileNumber>201</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -2747,7 +2771,7 @@
     </File>
     <File>
       <GroupNumber>13</GroupNumber>
-      <FileNumber>200</FileNumber>
+      <FileNumber>202</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -2759,7 +2783,7 @@
     </File>
     <File>
       <GroupNumber>13</GroupNumber>
-      <FileNumber>201</FileNumber>
+      <FileNumber>203</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -2771,7 +2795,7 @@
     </File>
     <File>
       <GroupNumber>13</GroupNumber>
-      <FileNumber>202</FileNumber>
+      <FileNumber>204</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
