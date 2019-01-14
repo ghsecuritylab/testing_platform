@@ -1502,6 +1502,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Task\App\RtuFrame.c</FilePath>
             </File>
+            <File>
+              <FileName>TCP_Server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Task\App\TCP_Server.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

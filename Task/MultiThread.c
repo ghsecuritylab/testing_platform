@@ -13,14 +13,16 @@
 #include "Led.h"
 #include "Sample.h"
 #include "KI_test.h"
+#include "TCP_Server.h"
+
 
 int rt_multi_thread_start(void)
 {
 	
     LedThread();
-	KItestThread();
-	SampleThread();
-	
+//	KItestThread();
+//	SampleThread();
+	TCP_CommunicateThread();
     return 0;
 }
 INIT_APP_EXPORT(rt_multi_thread_start);
