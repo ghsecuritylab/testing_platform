@@ -14,6 +14,8 @@
 #include "stdbool.h"
 #include "Sample.h"
 #include "DriverAD7616.h"
+#include "DriverKI.h"
+
 
 /* 采样任务相关 */
 static struct rt_thread rt_thread_sample;
@@ -53,27 +55,58 @@ void SampleThread(void)
   * @param : void*
   * @return: void 
   * @updata: [2019-01-09][Lei][create]
+             [2019-01-15][zhaochangquan][revise]
   */
+
+
+
+
 static void rt_sample_thread_entry(void* param)
 {
 	AD7616Init();
+	KIInit();
 	rt_thread_delay(5000);
+	int i;
 	
 	while(1)
 	{
-		if(SAMPLE_READY == g_SampeState)
+		
+		while((Run_Stop) == 0)      //为1停止实验
 		{
-			StartADCPWM();
+			if(FHZ_STATE)           //分合闸状态指示，1为合闸状态，0为分闸状态
+			{
+				FZ_ON;     //输出分闸指令
+				FZ_ON;
+				rt_thread_delay(10);
+				FZ_OFF;    //取消输出分闸指令
+			}
+			else
+			{
+				HZ_ON;     //输出合闸指令
+				HZ_ON;
+				rt_thread_delay(10);
+				HZ_OFF;    //取消输出合闸指令
+			}
+			
+			
+			if(SAMPLE_READY == g_SampeState)
+			{
+				StartADCPWM();
+			}
+			
+			if(SAMPLE_COMPLETE == g_SampeState)
+			{
+				for(uint32_t j = 0; j < (ADC_CHANNEL_NUM-2); j++)
+				{
+					rt_kprintf("g_SampleAdcData[%d][0] = %d.\r\n", j, g_SampleAdcData[j][0]);
+				}
+				g_SampeState = SAMPLE_READY;
+			}
+				
 		}
 		
-		if(SAMPLE_COMPLETE == g_SampeState)
-		{
-			for(uint32_t j = 0; j < (ADC_CHANNEL_NUM-2); j++)
-			{
-				rt_kprintf("g_SampleAdcData[%d][0] = %d.\r\n", j, g_SampleAdcData[j][0]);
-			}
-			g_SampeState = SAMPLE_READY;
-		}
+
+		rt_kprintf("Wait for sample!!!\r\n");
 		rt_thread_delay(3000);
 	}
 }

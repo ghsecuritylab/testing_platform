@@ -16,7 +16,7 @@
 
 
 
-uint16_t KIBuffer[60000];   //缓存16路开入输入   
+uint16_t KIBuffer;   //缓存16路开入输入   
 
 
   struct IO_handle KICS1Handle;
@@ -160,27 +160,27 @@ uint8_t KI_Buffer(void)
   * @updata: [2019-01-09][ZhaoChangquan][creat]
 	           
   */  
-unsigned int KI_Get(unsigned int num)
+unsigned int KI_Get(void)
 {
 	
 	KI_CS_Write(KICS2Handle, LOW);
 	KI_CS_Write(KICS2Handle, LOW);
 	KI_CS_Write(KICS2Handle, LOW);
 	KI_CS_Write(KICS2Handle, LOW);
-	KIBuffer[num] = KI_Buffer();
+	KIBuffer = KI_Buffer();
 	KI_CS_Write(KICS2Handle, HIGH);
 	
 	KI_CS_Write(KICS1Handle, LOW);
 	KI_CS_Write(KICS1Handle, LOW);
 	KI_CS_Write(KICS1Handle, LOW);
 	KI_CS_Write(KICS1Handle, LOW);
-	KIBuffer[num] = (KI_Buffer())|(KIBuffer[num]<<8);
+	KIBuffer = (KI_Buffer())|(KIBuffer<<8);
 	KI_CS_Write(KICS1Handle, HIGH);
 	
 
 	
 	
-	return KIBuffer[num];
+	return KIBuffer;
 }
 
 
