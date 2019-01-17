@@ -27,6 +27,7 @@ static void rt_test_thread_entry(void* param)
 	while(1)
 	{
 		GenAndSendLongFrame(LOCAL_ADDRESS, UP_CODE, (uint8_t*)"qweytgdfhgrtyuio", strlen("qweytgdfhgrtyuio"));
+//		PackAndSendData(LOCAL_ADDRESS, UP_CODE, (uint8_t*)"qweytgdfhgrtyuio");
 		rt_thread_delay(5000);
 	}
 }

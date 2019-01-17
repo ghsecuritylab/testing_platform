@@ -16,8 +16,8 @@ extern "C" {
 #include "Header.h"
 
 
-#define SEND_FRAME_LEN 128UL			//短帧发送帧长度
-#define FRAME_DATA_LEN 128				//帧数据长度
+#define SEND_FRAME_LEN 512UL			//短帧发送帧长度
+#define FRAME_DATA_LEN 1024UL				//帧数据长度
 
 
 typedef struct
