@@ -40,6 +40,7 @@ void  GenRTUFrame(uint8_t addr, uint8_t funcode,
 void  GenRTUFrameCumulativeSum(uint8_t addr, uint8_t funcode,
              uint8_t sendData[], uint8_t datalen, uint8_t* pRtuFrame, uint8_t *plen);
 void SendFrame(uint8_t* pFrame, uint32_t len);
+void  GenAndSendLongFrame(uint8_t addr, uint8_t funcode, uint8_t sendData[], uint32_t datalen);
 
 
 #ifdef	__cplusplus

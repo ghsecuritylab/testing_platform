@@ -244,13 +244,57 @@ void  GenRTUFrame(uint8_t addr, uint8_t funcode,
     }
 
 //    uint16_t crc =  CRC16(pRtuFrame, len - 2);
-	uint16_t crc =  CheckSum(pRtuFrame, len - 2);
+	uint16_t crc =  CheckSum (pRtuFrame, len - 2);
     pRtuFrame[len - 2] = (uint8_t)(crc & 0xFF);
     pRtuFrame[len - 1] = (uint8_t)((crc & 0xFF00) >> 8);
 
     completeFlag = 0;
 }
 
+
+/**************************************************
+ *函数名：  GenAndSendLongFrame()
+ *功能：  生成通信长帧，并且一部分一部分发出去
+ *形参： 目的地址 uint8_t addr
+ *       功能代号 uint8_t funcode
+ *       数据数组  uint8_t sendData[]
+ *       数据长度  uint32_t datalen
+ *返回值：void
+****************************************************/
+void  GenAndSendLongFrame(uint8_t addr, uint8_t funcode, uint8_t sendData[], uint32_t datalen)
+{
+	uint32_t dataIndex = 0;
+	uint8_t pRtuFrame[128] = {0};		//要发送的数据包
+	uint16_t crc = 0;		//累加校验和
+//    uint32_t len = 1 + 1 + 4 + datalen + 2;		//帧的总长度
+
+    pRtuFrame[dataIndex++] = addr;
+    pRtuFrame[dataIndex++] = funcode;
+    pRtuFrame[dataIndex++] = (datalen & 0x000000FF) >> 0;
+	pRtuFrame[dataIndex++] = (datalen & 0x0000FF00) >> 8;
+	pRtuFrame[dataIndex++] = (datalen & 0x000FF000) >> 16;
+	pRtuFrame[dataIndex++] = (datalen & 0x0FF00000) >> 24;
+	
+
+    for (uint32_t i = 0; i < datalen;  i++)
+    {
+        pRtuFrame[dataIndex++] = sendData[i];
+		if(dataIndex >= 500)
+		{
+			crc +=  CheckSum(pRtuFrame, dataIndex);
+			SendFrame(pRtuFrame, dataIndex);
+			memset(pRtuFrame, 0, 128);
+			dataIndex = 0;
+		}
+    }
+
+	crc +=  CheckSum(pRtuFrame, dataIndex);
+    pRtuFrame[dataIndex++] = (uint8_t)(crc & 0xFF);
+    pRtuFrame[dataIndex++] = (uint8_t)((crc & 0xFF00) >> 8);
+	SendFrame(pRtuFrame, dataIndex);
+
+    completeFlag = 0;
+}
 
 
 void SendFrame(uint8_t* pFrame, uint32_t len)
