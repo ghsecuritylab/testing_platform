@@ -20,9 +20,17 @@
 #define TCP_COMMUNICATE_THREAD_STACK_SIZE                                          (4096)
 #define TCP_COMMUNICATE_THREAD_TIMESLICE                                           (20)
 
+#define DATA_DEAL_THREAD_NAME                                                		"data_deal"
+#define DATA_DEAL_THREAD_PRIORITY                                            		(6)
+#define DATA_DEAL_THREAD_STACK_SIZE                                          		(2048)
+#define DATA_DEAL_THREAD_TIMESLICE                                           		(20)
 
 
-void TCP_CommunicateThread(void);
+
+void TCP_CommunicateThread(void);					//TCP通信线程
+void TCP_SendData(uint8_t* data, uint32_t dataLenth);		//TCP发送数据
+void DataDealThread(void);						//数据处理线程
+void PackAndSendData(uint8_t addr, uint8_t funcode, uint8_t* data);		//打包发送数据
 
 
 

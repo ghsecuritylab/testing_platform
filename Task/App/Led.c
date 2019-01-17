@@ -70,6 +70,7 @@ static void rt_led_thread_entry(void* param)
 			runLedState = LED_OFF;
 		}
 		rt_thread_delay(1000);
+		
 	}
 	
 }

@@ -14,16 +14,21 @@
 #include <sys/socket.h> /* 使用BSD Socket接口必须包含sockets.h这个头文件 */
 #include <string.h>
 #include "TCP_Server.h"
+#include "RtuFrame.h"
+
 
 /*******************************************************************************/
 #define SERV_PORT	2345	//端口2345,不能小于1024,1-1024为系统保留端口
 #define BACKLOG		5		//请求队列的长度
 #define BUF_SIZE	1024	//接收缓冲区长度
 
-static const char send_data[] = "This is TCP Server from RT-Thread.\r\n"; /* 发送用到的数据 */
+
+static int sockfd, clientsfd;/* 定义监听socket描述符和数据传输socket描述符 */
 
 
 static void rt_tcp_communicate_thread_entry(void* param);
+static void rt_data_deal_thread_entry(void* param);
+static void ReceiveDataDeal(uint8_t* data, uint32_t dataLenth);
 /**************************function***********************************/
 
 /**
@@ -58,7 +63,6 @@ static void rt_tcp_communicate_thread_entry(void* param)
 {
     char *recv_data; /* 用于接收的指针，后面会做一次动态分配以请求可用内存 */
     uint32_t sin_size;
-    int sockfd, clientsfd;/* 定义监听socket描述符和数据传输socket描述符 */
     int	bytes_received;
     struct sockaddr_in server_addr, client_addr;/* 本机IP和端口号信息 客户端IP和端口号信息 */
     bool stop = false; /* 停止标志 */
@@ -126,8 +130,6 @@ static void rt_tcp_communicate_thread_entry(void* param)
         /* 客户端连接的处理 */
         while (1)
         {
-            /* 发送数据到connected socket */
-            send(clientsfd, send_data, strlen(send_data), 0);
 
             /* 从connected socket中接收数据，接收buffer是1024大小，但并不一定能够收到1024大小的数据 */
             bytes_received = recv(clientsfd, recv_data, BUF_SIZE, 0);
@@ -138,26 +140,8 @@ static void rt_tcp_communicate_thread_entry(void* param)
                 break;
             }
 
-            /* 有接收到数据，把末端清零即加入字符串结束符*/
-            recv_data[bytes_received] = '\0';
-            if (strcmp(recv_data , "q") == 0 || strcmp(recv_data , "Q") == 0)
-            {
-                /* 如果首字母是q或Q，关闭这个连接 */
-                closesocket(clientsfd);
-                break;
-            }
-            else if (strcmp(recv_data, "exit") == 0)
-            {
-                /* 如果接收的是exit，则关闭整个服务端 */
-                closesocket(clientsfd);
-                stop = true;
-                break;
-            }
-            else
-            {
-                /* 在控制终端显示收到的数据 */
-                rt_kprintf("RECIEVED DATA = %s \n" , recv_data);
-            }
+			ReceiveDataDeal((uint8_t*)recv_data, bytes_received);
+            
 			rt_thread_delay(50);
         }
     }
@@ -172,4 +156,124 @@ static void rt_tcp_communicate_thread_entry(void* param)
 }
 
 
+/**
+  * @brief : TCP 服务器通信发送函数
+  * @param : data 要发送的数据
+  * @param : dataLenth 数据长度
+  * @return: void 
+  * @updata: [2019-01-14][Lei][create]
+  */
+void TCP_SendData(uint8_t* data, uint32_t dataLenth)
+{
+	send(clientsfd, data, dataLenth, 0);
+}
+
+/**
+  * @brief : TCP 服务器通信发送函数
+  * @param : addr 远方的地址码
+  * @param : funcode 功能码
+  * @param : data 要发送的数据
+  * @return: void 
+  * @updata: [2019-01-16][Lei][create]
+  */
+void PackAndSendData(uint8_t addr, uint8_t funcode, uint8_t* data)
+{
+	uint8_t sendData[SEND_FRAME_LEN] = {0};		//要发送的数据包
+	uint32_t dataLenth = 0;						//要发送的数据包大小
+	
+	GenRTUFrame(addr, funcode, data, strlen((char*)data), sendData, &dataLenth);
+	SendFrame(sendData, dataLenth);
+}
+
+
+/**
+  * @brief : TCP 服务器通信对接收到的数据进行入队处理
+  * @param : data 要发送的数据
+  * @param : dataLenth 数据长度
+  * @return: void 
+  * @updata: [2019-01-14][Lei][create]
+  */
+static void ReceiveDataDeal(uint8_t* data, uint32_t dataLenth)
+{
+	for(uint32_t i = 0; i < dataLenth; i++)
+	{
+		FrameQueneIn((uint8_t)data[i]);
+	}
+}
+
+
+/**
+  * @brief : 数据处理线程
+  * @param : void
+  * @return: void 
+  * @updata: [2019-01-16][Lei][create]
+  */
+void DataDealThread(void)
+{
+	rt_thread_t DataDeal = NULL;
+	DataDeal = rt_thread_create(DATA_DEAL_THREAD_NAME, 
+								rt_data_deal_thread_entry,
+								RT_NULL,
+								DATA_DEAL_THREAD_STACK_SIZE,
+								DATA_DEAL_THREAD_PRIORITY,
+								DATA_DEAL_THREAD_TIMESLICE);
+	if(NULL != DataDeal)
+	{
+		rt_thread_startup(DataDeal);
+		rt_kprintf("Data deal thread start\r\n");
+	}
+}
+
+
+/**
+  * @brief : 数据处理线程入口
+  * @param : void*
+  * @return: void 
+  * @updata: [2019-01-16][Lei][create]
+  */
+static void rt_data_deal_thread_entry(void* param)
+{
+	uint32_t count = 0;						//当前接收队列中剩余字符数
+	uint32_t lastCount = 0;					//上一次接收队列中剩余的字符数
+	uint8_t realData[100] = {0};			//从接收到的帧信息中提取出的数据信息
+	frameRtu judgeFrame, reciveFrame;		//接收帧的相关信息结构体
+	judgeFrame.address = LOCAL_ADDRESS;				//设置本地地址信息
+	judgeFrame.funcode = FUN_CODE;				//设置功能码，对应只接收分合闸信息
+	
+	ReciveFrameDataInit();
+	while(1)
+	{
+		if(g_ReciveBufferLen)
+		{
+			do
+			{	
+				count = ReciveBufferDataDealing(&judgeFrame, &reciveFrame);
+				if (reciveFrame.completeFlag)		//接受完一帧完整数据则退出死循环进行处理
+				{
+					memset(realData, 0, sizeof(realData));
+					memcpy(realData, reciveFrame.pData, strlen((char*)reciveFrame.pData));
+					memset(&reciveFrame, 0, sizeof(frameRtu));
+					break;
+				}
+				
+				if (lastCount == count)			//上一次的剩余字符数与本次剩余字符数数量相同则退出死循环
+				{
+					break;
+				}
+				lastCount = count;		//记录本次剩余数据长度
+				
+				rt_thread_delay(30);
+			}while(true);
+				
+		}
+		if(strlen((char*)realData))
+		{
+			rt_kprintf("REAL_DATA = %s\r\n", realData);
+			memset(realData, 0, strlen((char*)realData));
+		}
+		
+		rt_thread_delay(30);
+	}
+	
+}
 
