@@ -16,7 +16,7 @@
 //入队错误标志位 true未满 正常入队 false 无法入队
 bool volatile ReciveErrorFlag = true; 
 
-#define FRAME_QUENE_LEN 256
+#define FRAME_QUENE_LEN 512
 uint8_t  volatile g_ReciveBufferLen = 0; //未处理接收数据长度
 uint8_t  volatile  g_ReciveBuffer[FRAME_QUENE_LEN] = {0}; //临时存放串口接收数据
 uint8_t  FifoHead = 0;
