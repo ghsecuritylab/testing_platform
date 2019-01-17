@@ -24,7 +24,7 @@ typedef struct
 {
     uint8_t address; //地址
     uint8_t funcode; //功能代码
-    uint16_t datalen; //数据长度
+    uint32_t datalen; //数据长度
     uint8_t* pData; //指向发送数据指针
     bool completeFlag;
 } frameRtu;

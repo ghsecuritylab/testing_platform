@@ -182,10 +182,10 @@ uint8_t ReciveBufferDataDealing(frameRtu* pJudgeFrame, frameRtu* pReciveFrame)
                 {
                     FrameData[0] = pReciveFrame->address;
                     FrameData[1] = pReciveFrame->funcode;
-					FrameData[2] = (len & 0x000F) >> 0;			//长度的低位
-					FrameData[3] = (len & 0x00F0) >> 8;
-					FrameData[4] = (len & 0x0F00) >> 16;
-                    FrameData[5] = (len & 0xF000) >> 24;		//长度的高位
+					FrameData[2] = (len & 0x000000FF) >> 0;			//长度的低位
+					FrameData[3] = (len & 0x0000FF00) >> 8;
+					FrameData[4] = (len & 0x000FF000) >> 16;
+                    FrameData[5] = (len & 0xFF000000) >> 24;		//长度的高位
                     uint16_t crc =  CheckSum((uint8_t* )FrameData, len + 6);
                     uint8_t  crcL = FrameData[len + 6];
                     uint8_t  crcH = FrameData[len + 7];
@@ -231,10 +231,10 @@ void  GenRTUFrame(uint8_t addr, uint8_t funcode,
 
     pRtuFrame[0] = addr;
     pRtuFrame[1] = funcode;
-    pRtuFrame[2] = (datalen & 0x000F) >> 0;
-	pRtuFrame[3] = (datalen & 0x00F0) >> 8;
-	pRtuFrame[4] = (datalen & 0x0F00) >> 16;
-	pRtuFrame[5] = (datalen & 0xF000) >> 24;
+    pRtuFrame[2] = (datalen & 0x000000FF) >> 0;
+	pRtuFrame[3] = (datalen & 0x0000FF00) >> 8;
+	pRtuFrame[4] = (datalen & 0x000FF000) >> 16;
+	pRtuFrame[5] = (datalen & 0x0FF00000) >> 24;
 	
 
     int i = 0;

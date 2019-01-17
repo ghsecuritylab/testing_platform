@@ -26,7 +26,7 @@ static void rt_test_thread_entry(void* param)
 {
 	while(1)
 	{
-		PackAndSendData(LOCAL_ADDRESS, FUN_CODE, (uint8_t*)"qwertyuio");
+		PackAndSendData(LOCAL_ADDRESS, FUN_CODE, (uint8_t*)"qweytgdfhgrtyuio");
 		rt_thread_delay(5000);
 	}
 }
