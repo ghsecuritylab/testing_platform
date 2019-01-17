@@ -18,7 +18,7 @@ int rt_multi_thread_start(void)
 {
 	
     LedThread();
-	KItestThread();
+//	KItestThread();
 	SampleThread();
     return 0;
 }

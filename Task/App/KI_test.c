@@ -19,6 +19,7 @@
 
 
 /* KI测试任务相关 */
+
 static struct rt_thread rt_thread_KItest;
 static rt_uint8_t rt_thread_KItest_stack[KItest_THREAD_STACK_SIZE];
 
@@ -59,7 +60,7 @@ void KItestThread(void)
   */
 static void rt_KItest_thread_entry(void* param)
 {
-	KIInit();
+//	KIInit();
 
 	int i=0;
 	int c;
@@ -67,7 +68,11 @@ static void rt_KItest_thread_entry(void* param)
 	{
 		if(i<256)
 		{
-			c=KI_Get(i++);
+			
+			
+			c=KI_Get();
+
+			
 			rt_kprintf("KI_Buffer=%d\r\n",c);
 
 		}

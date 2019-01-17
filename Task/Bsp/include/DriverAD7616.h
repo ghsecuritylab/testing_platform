@@ -29,7 +29,18 @@
 #define ADC_FIFO_ADDRESS  *((volatile  short *)AD7616_DATA_ADDR)
 
 
-#define ADC_SAMPLE_LEN 128 //采样长度
+
+/**
+  * @brief : ADC_SAMPLE_LEN
+  * @param : 将采样长度从128改为2000
+  * @return: 
+  * @updata: [2019-01-15][zhaochangquan][revise]
+  */
+
+#define ADC_SAMPLE_LEN 2000 //采样长度    采样时间/采样周期
+
+
+
 #define ADC_CHANNEL_NUM 32
 
 enum AD7616_State
