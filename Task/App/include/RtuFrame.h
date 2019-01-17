@@ -16,8 +16,8 @@ extern "C" {
 #include "Header.h"
 
 
-#define SEND_FRAME_LEN 128UL			//发送帧长度
-#define FRAME_DATA_LEN 128			//帧数据长度
+#define SEND_FRAME_LEN 128UL			//短帧发送帧长度
+#define FRAME_DATA_LEN 128				//帧数据长度
 
 
 typedef struct
@@ -37,8 +37,8 @@ void  ReciveFrameDataInit(void);
 unsigned char ReciveBufferDataDealing(frameRtu* pJudgeFrame, frameRtu* pReciveFrame);
 void  GenRTUFrame(uint8_t addr, uint8_t funcode,
                         uint8_t sendData[], uint32_t datalen, uint8_t* pRtuFrame, uint32_t *plen);
-void  GenRTUFrameCumulativeSum(uint8_t addr, uint8_t funcode,
-             uint8_t sendData[], uint8_t datalen, uint8_t* pRtuFrame, uint8_t *plen);
+//void  GenRTUFrameCumulativeSum(uint8_t addr, uint8_t funcode,
+//             uint8_t sendData[], uint8_t datalen, uint8_t* pRtuFrame, uint8_t *plen);
 void SendFrame(uint8_t* pFrame, uint32_t len);
 void  GenAndSendLongFrame(uint8_t addr, uint8_t funcode, uint8_t sendData[], uint32_t datalen);
 

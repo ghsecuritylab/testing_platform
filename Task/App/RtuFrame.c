@@ -12,29 +12,14 @@
 //增加  ReciveErrorFlag 接收错误标志 及接收满后的重新清空初始化
 ********************************************/
 
-//#include <stdlib.h>
-//入队错误标志位 true未满 正常入队 false 无法入队
-bool volatile ReciveErrorFlag = true; 
 
 #define FRAME_QUENE_LEN 512
-uint8_t  volatile g_ReciveBufferLen = 0; //未处理接收数据长度
-uint8_t  volatile  g_ReciveBuffer[FRAME_QUENE_LEN] = {0}; //临时存放串口接收数据
-uint8_t  FifoHead = 0;
-uint8_t  FifoEnd =0;
-uint8_t  DealStep = 0;
+uint8_t  volatile g_ReciveBufferLen = 0;	//队列中未处理接收数据的长度
+static uint8_t  volatile  g_ReciveBuffer[FRAME_QUENE_LEN] = {0};	//临时存放接收数据的队列
+static uint8_t  FifoHead = 0;		//队列头
+static uint8_t  FifoEnd =0;			//队列尾
 
-//帧数据放置区域
 
-uint8_t  volatile FrameData[FRAME_DATA_LEN] = {0};
-
-uint8_t RtuFrame[16] = {0};
-uint8_t completeFlag = 0;
-
-uint8_t LocalAddress =  LOCAL_ADDRESS;
-
-uint32_t ReciveIndex = 0;  //接收索引 指向待存帧位置
-
-uint8_t  volatile SendFrameData[SEND_FRAME_LEN] = {0};
 
 static uint16_t CheckSum(uint8_t *dataMsg, uint32_t dataLen);
 /**************************************************
@@ -48,12 +33,6 @@ void  ReciveFrameDataInit(void)
     g_ReciveBufferLen = 0;
     FifoHead = 0;
     FifoEnd = 0;
-    
-    ReciveErrorFlag = true;
-    LocalAddress =  LOCAL_ADDRESS;
-    DealStep = 0;
-    ReciveIndex = 0;
-    completeFlag = 0;
 }
 
 /**************************************************
@@ -106,7 +85,10 @@ bool FrameQueneOut(uint8_t* pData)
 ****************************************************/
 uint8_t ReciveBufferDataDealing(frameRtu* pJudgeFrame, frameRtu* pReciveFrame)
 {
-
+	static uint32_t ReciveIndex = 0;  //接收索引 指向待存帧位置
+	static uint8_t  DealStep = 0;
+	static uint8_t  volatile FrameData[FRAME_DATA_LEN] = {0};  //帧数据放置区域
+	
     //如果存在未处理的数据
     if (g_ReciveBufferLen > 0)
     {
@@ -248,7 +230,6 @@ void  GenRTUFrame(uint8_t addr, uint8_t funcode,
     pRtuFrame[len - 2] = (uint8_t)(crc & 0xFF);
     pRtuFrame[len - 1] = (uint8_t)((crc & 0xFF00) >> 8);
 
-    completeFlag = 0;
 }
 
 
@@ -293,7 +274,6 @@ void  GenAndSendLongFrame(uint8_t addr, uint8_t funcode, uint8_t sendData[], uin
     pRtuFrame[dataIndex++] = (uint8_t)((crc & 0xFF00) >> 8);
 	SendFrame(pRtuFrame, dataIndex);
 
-    completeFlag = 0;
 }
 
 
