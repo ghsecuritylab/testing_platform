@@ -16,13 +16,16 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 #include "DriverAD7616.h"
-
+#include "DriverKI.h"
+#include "Sample.h"
 
 
 /**
 * 采样数据保存
 */
-int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN];		//保存采样值的数组
+
+
+int16_t g_SampleAdcData[ADC_CHANNEL_NUM];		//保存采样值的数组
 uint16_t g_SampleIndex;				//采样索引
 enum AD7616_State g_SampeState = SAMPLE_READY;			//采样标志位
 
@@ -35,7 +38,7 @@ static void TIM5_PWM_Init(uint16_t arr, uint16_t pulse, uint16_t psc);
 static void AD7616_delay_ns(uint32_t nus);
 static void AD7616_FSMC_Init(void);
 
-__STATIC_INLINE void read_ad7616_data(uint16_t adc_index);
+__STATIC_INLINE void read_ad7616_data(void);
 __STATIC_INLINE void ADC_BusyInit(void);
 
 
@@ -159,14 +162,14 @@ static void AD7616_FSMC_Init(void)
   * @Description: Read the sampled data of AD7616
   * @param[in]  : none
   * @return     : none
-  * @updata     : [YYYY-MM-DD] [Change person name][change content]
+  * @updata     : [2019-01-17] [zhaochangquan][change]
   */
-__STATIC_INLINE void read_ad7616_data(uint16_t adc_index)
+__STATIC_INLINE void read_ad7616_data()
 {
 
     for (uint16_t adc_chanel = 0; adc_chanel < ADC_CHANNEL_NUM - 2; adc_chanel++)
     {
-        g_SampleAdcData[adc_chanel][adc_index] = (ADC_FIFO_ADDRESS);
+        g_SampleAdcData[adc_chanel] = (ADC_FIFO_ADDRESS);
     }
 
 }
@@ -266,9 +269,10 @@ void EXTI15_10_IRQHandler(void)
 		/* USER CODE BEGIN LL_EXTI_LINE_12 */
 		
 		//将所有通道的采样值保存在g_SampleAdcData中
-		read_ad7616_data(g_SampleIndex);
+		read_ad7616_data();
+		SampleDataDealing(g_SampleIndex);  //将数据以字节形式存入g_SampleData
 		g_SampleIndex++;
-		if(ADC_SAMPLE_LEN == g_SampleIndex)
+		if(g_DataLength == g_SampleIndex)
 		{
 			StopADCPWM();
 		}
@@ -287,8 +291,8 @@ int32_t readChanelData(uint16_t chanelNum, uint16_t adcIndex)
 {
 	//TODO:仍存在一些小问题
 	int16_t chanelA = 0, chanelB = 0;
-	chanelA = (g_SampleAdcData[2*chanelNum][adcIndex] + g_SampleAdcData[28-2*chanelNum][adcIndex]) / 2;
-	chanelB = (g_SampleAdcData[2*chanelNum+1][adcIndex] + g_SampleAdcData[29-2*chanelNum][adcIndex]) / 2;
+//	chanelA = (g_SampleAdcData[2*chanelNum][adcIndex] + g_SampleAdcData[28-2*chanelNum][adcIndex]) / 2;
+//	chanelB = (g_SampleAdcData[2*chanelNum+1][adcIndex] + g_SampleAdcData[29-2*chanelNum][adcIndex]) / 2;
 
 	return (chanelA + ((int32_t)chanelB<<16));
 }

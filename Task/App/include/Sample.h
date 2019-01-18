@@ -17,6 +17,23 @@
 #define SAMPLE_THREAD_STACK_SIZE                                          (2048)
 #define SAMPLE_THREAD_TIMESLICE                                           (20)
 
+
+
+
+
+
+extern unsigned short int g_DataLength;
+extern signed char *g_SampleData;
+
+enum SendData_State
+{
+	Send_READY = 0,			//缓存完成，允许发送
+
+	Send_COMPLETE = 1,		//发送完成，允许继续采集
+};
+
+
+extern void SampleDataDealing(int n);
 void SampleThread(void);
 
 #endif

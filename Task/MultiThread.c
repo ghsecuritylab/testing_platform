@@ -54,10 +54,10 @@ int rt_multi_thread_start(void)
 	
     LedThread();
 //	KItestThread();
-//	SampleThread();
-	TCP_CommunicateThread();
-	DataDealThread();
-	TestThread();
+	SampleThread();
+//	TCP_CommunicateThread();
+//	DataDealThread();
+//	TestThread();
     return 0;
 }
 INIT_APP_EXPORT(rt_multi_thread_start);

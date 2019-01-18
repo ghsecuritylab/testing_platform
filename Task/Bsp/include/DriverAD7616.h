@@ -37,7 +37,7 @@
   * @updata: [2019-01-15][zhaochangquan][revise]
   */
 
-#define ADC_SAMPLE_LEN 2000 //采样长度    采样时间/采样周期
+//#define ADC_SAMPLE_LEN 2000 //采样长度    采样时间/采样周期
 
 
 
@@ -51,13 +51,14 @@ enum AD7616_State
 };
 
 
-extern int16_t g_SampleAdcData[ADC_CHANNEL_NUM][ADC_SAMPLE_LEN];
+extern int16_t g_SampleAdcData[ADC_CHANNEL_NUM];
 extern uint16_t g_SampleIndex;
 extern enum AD7616_State g_SampeState;
 
 
 /* PUBLIC FUNCTIONS ----------------------------------------------------------*/
 extern int rt_hw_adc_init(void);
+
 
 
 void AD7616Init(void);

@@ -37,7 +37,7 @@
 #define FZ_OFF  HAL_GPIO_WritePin(GPIOI, GPIO_PIN_6, GPIO_PIN_RESET)     //停止输出分闸指令
 
 void KIInit(void);	
-unsigned int KI_Get(void);
+uint16_t KI_Get(void);
 
 //extern unsigned char LowBuffer[];   //缓存前八路开入输入   
 //extern unsigned char HighBuffer[];  //缓存后八路开入输入
