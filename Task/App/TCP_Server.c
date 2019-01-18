@@ -238,7 +238,7 @@ static void rt_data_deal_thread_entry(void* param)
 	uint8_t realData[100] = {0};			//从接收到的帧信息中提取出的数据信息
 	frameRtu judgeFrame, reciveFrame;		//接收帧的相关信息结构体
 	judgeFrame.address = LOCAL_ADDRESS;				//设置本地地址信息
-	judgeFrame.funcode = UP_CODE;				//设置功能码，对应只接收分合闸信息
+	judgeFrame.funcode = FUN_CODE;				//设置功能码，对应只接收分合闸信息
 	
 	ReciveFrameDataInit();
 	while(1)

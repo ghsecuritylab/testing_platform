@@ -18,15 +18,16 @@
 
 #define TEST_THREAD_NAME                                                "test"
 #define TEST_THREAD_PRIORITY                                            (6)
-#define TEST_THREAD_STACK_SIZE                                          (1024)
+#define TEST_THREAD_STACK_SIZE                                          (2048)
 #define TEST_THREAD_TIMESLICE                                           (20)
 
 
 static void rt_test_thread_entry(void* param)
 {
+	uint8_t data[18] = {0x02,0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0x00,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF};
 	while(1)
 	{
-		GenAndSendLongFrame(LOCAL_ADDRESS, UP_CODE, (uint8_t*)"qweytgdfhgrtyuio", strlen("qweytgdfhgrtyuio"));
+		GenAndSendLongFrame(REMOTE_ADDRESS, UP_CODE, data, 18);
 //		PackAndSendData(LOCAL_ADDRESS, UP_CODE, (uint8_t*)"qweytgdfhgrtyuio");
 		rt_thread_delay(5000);
 	}
